@@ -16,32 +16,26 @@ export default function Login() {
     setMessage(null);
 
     try {
-      // CORRECT ENDPOINT
-      const res = await api.post("/auth/login/", {
-        email: email,
-        password: password,
-      });
+      const payload = { email, password };
 
-      console.log("LOGIN RESPONSE:", res.data);
+      const res = await api.post("/auth/login/", payload);
 
-      const token =
-        res.data.access ||
-        res.data.access_token ||
-        res.data.token;
+      const { access } = res.data;
+      saveToken(access);
 
-      if (!token) {
-        throw new Error("Token missing in response");
-      }
+      setMessage({ type: "success", text: "Login successful!" });
 
-      saveToken(token);
-      navigate("/dashboard");
+      setTimeout(() => navigate("/dashboard"), 800);
     } catch (err) {
-      console.error("LOGIN ERROR:", err.response?.data || err.message);
-      setMessage("Invalid email or password");
+      setMessage({
+        type: "error",
+        text: "Invalid credentials",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
