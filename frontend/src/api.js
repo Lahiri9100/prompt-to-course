@@ -5,7 +5,6 @@ const api = axios.create({
   baseURL: "https://prompt-to-course-production.up.railway.app/api",
 });
 
-// Attach token to every request
 api.interceptors.request.use((config) => {
   const token = getToken();
   if (token) {

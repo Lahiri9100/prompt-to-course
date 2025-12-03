@@ -6,22 +6,23 @@ import { saveToken } from "../auth";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const submit = async () => {
     setLoading(true);
-    setError(null);
+    setMessage(null);
 
     try {
+      // CORRECT ENDPOINT
       const res = await api.post("/auth/login/", {
         email: email,
         password: password,
       });
 
-      console.log("Login response:", res.data);
+      console.log("LOGIN RESPONSE:", res.data);
 
       const token =
         res.data.access ||
@@ -29,14 +30,14 @@ export default function Login() {
         res.data.token;
 
       if (!token) {
-        throw new Error("No token returned from backend");
+        throw new Error("Token missing in response");
       }
 
       saveToken(token);
       navigate("/dashboard");
     } catch (err) {
-      console.log("Login error:", err.response?.data || err.message);
-      setError("Invalid email or password");
+      console.error("LOGIN ERROR:", err.response?.data || err.message);
+      setMessage("Invalid email or password");
     }
 
     setLoading(false);
@@ -47,7 +48,7 @@ export default function Login() {
       <div className="w-full max-w-md bg-white/10 p-8 rounded-xl border border-white/20">
         <h2 className="text-3xl font-bold mb-6">Login</h2>
 
-        {error && <div className="mb-4 text-red-400">{error}</div>}
+        {message && <div className="mb-4 text-red-400">{message}</div>}
 
         <input
           className="w-full p-3 mb-4 bg-white/10 border border-white/20 rounded"
@@ -73,8 +74,10 @@ export default function Login() {
         </button>
 
         <p className="text-center mt-4">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-purple-400">Register</Link>
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-purple-400">
+            Register
+          </Link>
         </p>
       </div>
     </div>
