@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
-import { saveToken } from "../auth";
+import { saveToken, saveUser } from "../auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,12 +18,16 @@ export default function Login() {
     try {
       const payload = { email, password };
 
-      // THE CORRECT ENDPOINT
+      // Correct endpoint
       const res = await api.post("/auth/login/", payload);
 
       const { access } = res.data;
 
+      // Save JWT token
       saveToken(access);
+
+      // Save basic user info for dashboard
+      saveUser({ email });
 
       setMessage({ type: "success", text: "Login successful!" });
 
@@ -47,11 +51,13 @@ export default function Login() {
         <h2 className="text-3xl font-bold mb-6">Login</h2>
 
         {message && (
-          <div className={`p-3 mb-3 rounded text-sm ${
-            message.type === "error"
-              ? "bg-red-500/20 text-red-300"
-              : "bg-green-500/20 text-green-300"
-          }`}>
+          <div
+            className={`p-3 mb-3 rounded text-sm ${
+              message.type === "error"
+                ? "bg-red-500/20 text-red-300"
+                : "bg-green-500/20 text-green-300"
+            }`}
+          >
             {message.text}
           </div>
         )}
@@ -82,7 +88,9 @@ export default function Login() {
 
         <p className="text-center mt-4">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-purple-400">Register</Link>
+          <Link to="/register" className="text-purple-400">
+            Register
+          </Link>
         </p>
 
       </div>
