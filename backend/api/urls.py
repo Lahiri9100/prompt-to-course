@@ -1,6 +1,7 @@
+# backend/api/urls.py
 from django.urls import path
 from .views import RegisterView, LoginView
-from .generator_views import GenerateCourseView
+from .generator_views import GenerateCourseView  # keep your existing generator view
 
 urlpatterns = [
     path("auth/register/", RegisterView.as_view(), name="register"),

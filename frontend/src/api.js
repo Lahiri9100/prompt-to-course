@@ -1,12 +1,15 @@
 import axios from "axios";
-import { getToken } from "./auth";
 
 const api = axios.create({
   baseURL: "https://prompt-to-course-production.up.railway.app/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
+// attach token
 api.interceptors.request.use((config) => {
-  const token = getToken();
+  const token = localStorage.getItem("access_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

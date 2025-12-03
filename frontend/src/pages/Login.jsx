@@ -16,7 +16,7 @@ export default function Login() {
     setMessage(null);
 
     try {
-      const res = await api.post("/auth/login/", { email, password });
+      const res = await api.post("/auth/login/", payload);
       saveToken(res.data.access);
 
       navigate("/dashboard");

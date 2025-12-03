@@ -12,11 +12,7 @@ export default function Register() {
   const submit = async () => {
     setMessage(null);
     try {
-      await api.post("/auth/register/", {
-        full_name: fullName,
-        email,
-        password,
-      });
+      await api.post("/auth/register/", payload);
 
       navigate("/login");
     } catch (err) {
