@@ -1,10 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-import openai
 from django.conf import settings
 
-openai.api_key = settings.OPENAI_API_KEY
+# Try to import Gemini SDK. If not installed (local machine), avoid crash.
+try:
+    import google.generativeai as genai
+    GEMINI_AVAILABLE = True
+except ModuleNotFoundError:
+    GEMINI_AVAILABLE = False
+
 
 class GenerateCourseView(APIView):
     permission_classes = [IsAuthenticated]
@@ -15,38 +20,40 @@ class GenerateCourseView(APIView):
         if not prompt:
             return Response({"error": "Prompt is required"}, status=400)
 
-        system_prompt = """
-        You are an expert curriculum designer.
-        Given a topic or goal, create a detailed structured learning roadmap in JSON.
+        # If Gemini SDK exists & API key is set → use Gemini
+        if GEMINI_AVAILABLE and settings.GEMINI_API_KEY:
+            try:
+                genai.configure(api_key=settings.GEMINI_API_KEY)
+                model = genai.GenerativeModel("gemini-pro")
 
-        Example format:
-        {
-            "title": "Full-Stack Development Roadmap",
+                response = model.generate_content(
+                    f"Create a structured learning course in JSON format for: {prompt}"
+                )
+
+                return Response({"course": response.text})
+
+            except Exception as e:
+                return Response(
+                    {"error": "Gemini failed", "details": str(e)},
+                    status=500
+                )
+
+        # If no Gemini SDK installed → return MOCK SAFE OUTPUT
+        mock_course = {
+            "title": f"Course for {prompt}",
             "modules": [
                 {
-                    "name": "HTML & CSS",
-                    "topics": [
-                        "HTML basics",
-                        "CSS selectors",
-                        "Flexbox"
-                    ]
+                    "name": "Module 1: Basics",
+                    "topics": ["Introduction", "Core Concepts", "Setup"]
                 },
                 {
-                    "name": "JavaScript",
-                    "topics": ["Variables", "DOM", "Fetch API"]
+                    "name": "Module 2: Intermediate",
+                    "topics": ["Hands-on Project", "Real Use Cases"]
                 }
             ]
         }
-        """
 
-        completion = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Create a course for: {prompt}"}
-            ]
-        )
-
-        json_output = completion["choices"][0]["message"]["content"]
-
-        return Response({"course": json_output})
+        return Response({
+            "notice": "Gemini SDK not installed — returning mock course",
+            "course": mock_course
+        })

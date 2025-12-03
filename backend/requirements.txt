@@ -4,4 +4,4 @@ django-cors-headers>=4.3
 djangorestframework-simplejwt>=5.3.1
 gunicorn>=23.0
 whitenoise>=6.6
-openai==1.47.0
+google-generativeai
