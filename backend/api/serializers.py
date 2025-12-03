@@ -3,9 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
 
-# -------------------------------
-# REGISTER SERIALIZER
-# -------------------------------
 class RegisterSerializer(serializers.Serializer):
     full_name = serializers.CharField()
     email = serializers.EmailField()
@@ -22,19 +19,15 @@ class RegisterSerializer(serializers.Serializer):
         password = validated_data["password"]
 
         user = User.objects.create_user(
-            username=email,      # using email as username
+            username=email,
             email=email,
             password=password
         )
         user.first_name = full_name
         user.save()
-
         return user
 
 
-# -------------------------------
-# LOGIN SERIALIZER
-# -------------------------------
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
