@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
-const API_BASE = process.env.REACT_APP_API_BASE || "http://127.0.0.1:8000";
+export const BASE_URL = "https://prompt-to-course-production.up.railway.app";
 
 const api = axios.create({
   baseURL: API_BASE,
