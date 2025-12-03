@@ -16,72 +16,69 @@ export default function Login() {
     setMessage(null);
 
     try {
+      const payload = { email, password };   // ✅ FIXED: payload defined
+
       const res = await api.post("/auth/login/", payload);
-      saveToken(res.data.access);
+      const { access } = res.data;
 
-      navigate("/dashboard");
+      saveToken(access);
+
+      setMessage({ type: "success", text: "Login successful!" });
+
+      setTimeout(() => navigate("/dashboard"), 600);
+
     } catch (err) {
-      setMessage("Invalid credentials");
+      console.error("Login error:", err);
+      setMessage({ type: "error", text: "Invalid credentials" });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="h-screen w-full flex bg-black text-white">
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="glass w-full max-w-md p-8 rounded-xl border border-white/10">
 
-      {/* LEFT SIDE HERO SECTION */}
-      <div className="hidden lg:flex flex-1 items-center justify-center">
-        <h1 className="text-6xl font-bold leading-tight px-10">
-          Level Up Your <br /> Learning Journey.
-        </h1>
+        <h2 className="text-3xl font-bold mb-6">Login</h2>
+
+        {message && (
+          <div className={`p-3 mb-3 rounded text-sm ${
+            message.type === "error" ? "bg-red-500/20 text-red-300" : "bg-green-500/20 text-green-300"
+          }`}>
+            {message.text}
+          </div>
+        )}
+
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full p-3 mb-4 bg-white/10 rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full p-3 mb-6 bg-white/10 rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+          onClick={submit}
+          disabled={loading}
+          className="w-full py-3 bg-purple-600 rounded font-semibold"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+
+        <p className="text-center mt-4">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-purple-400">Register</Link>
+        </p>
+
       </div>
-
-      {/* RIGHT SIDE LOGIN CARD */}
-      <div className="flex flex-1 items-center justify-center">
-        <div className="w-full max-w-md bg-[#0f0f0f] p-10 rounded-2xl shadow-lg">
-
-          <h2 className="text-3xl font-bold mb-6">Login</h2>
-
-          {message && (
-            <div className="bg-red-500/20 text-red-300 p-3 rounded mb-3">
-              {message}
-            </div>
-          )}
-
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 mb-4 rounded bg-white/10 border border-white/20"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 mb-6 rounded bg-white/10 border border-white/20"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          <button
-            onClick={submit}
-            disabled={loading}
-            className="w-full p-3 rounded bg-gradient-to-r from-blue-500 to-pink-500 font-semibold"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-
-          <p className="text-center mt-4 text-white/60">
-            Don’t have an account?{" "}
-            <Link to="/register" className="text-blue-400 hover:underline">
-              Register
-            </Link>
-          </p>
-        </div>
-      </div>
-
     </div>
   );
 }
