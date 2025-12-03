@@ -31,7 +31,7 @@ export default function Register() {
         education_level: form.education_level,
         course: form.course,
       };
-
+      console.log("REGISTER REQUEST TO:", api.defaults.baseURL + "/auth/register/");
       await api.post("/api/auth/register/", payload);
 
       setMessage({
