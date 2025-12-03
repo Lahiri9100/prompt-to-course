@@ -1,92 +1,66 @@
-// src/components/CourseGenerator.jsx
+// frontend/src/components/CourseGenerator.jsx
 import React, { useState } from "react";
 import api from "../api";
 
 export default function CourseGenerator() {
   const [topic, setTopic] = useState("");
-  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [course, setCourse] = useState(null);
 
-  const generate = async () => {
-    if (!topic.trim()) return;
-
+  const handleGenerate = async () => {
     setLoading(true);
-    setResult(null);
+    setCourse(null);
 
     try {
-      const res = await api.post("/api/generate/", { topic });
-      setResult(res.data);
+      const token = localStorage.getItem("access_token");
+
+      const res = await api.post(
+        "/generate-course/",
+        { prompt: topic },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setCourse(JSON.parse(res.data.course));
     } catch (err) {
       console.error(err);
-      setResult({ error: "Failed to generate course." });
+      alert("Course generation failed.");
     }
 
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex justify-center pt-24 px-4">
+    <div className="p-10 text-white">
+      <h2 className="text-3xl font-bold mb-4">AI Course Generator</h2>
 
-      <div className="w-full max-w-3xl bg-[#0b0710]/80 border border-white/10 rounded-2xl p-8 shadow-lg">
-        <h2 className="text-3xl font-bold mb-6 neon-underline">Generate a Course</h2>
+      <input
+        type="text"
+        className="w-full p-4 bg-white/10 border border-white/20 rounded-lg mb-4"
+        placeholder="Enter a topic (e.g., Data Science)"
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+      />
 
-        <div className="flex gap-3 mb-8">
-          <input
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            placeholder="e.g., Learn Python from zero"
-            className="flex-1 p-3 rounded-lg bg-[#0f0b12] border border-white/10 focus:border-neonA outline-none"
-          />
-          <button
-            onClick={generate}
-            disabled={loading}
-            className="px-6 py-3 bg-neon-gradient rounded-lg font-semibold hover:opacity-90 transition"
-          >
-            {loading ? "Generating..." : "Generate"}
-          </button>
+      <button
+        onClick={handleGenerate}
+        disabled={loading}
+        className="px-6 py-3 bg-purple-600 rounded-lg font-semibold hover:bg-purple-700"
+      >
+        {loading ? "Generating..." : "Generate"}
+      </button>
+
+      {course && (
+        <div className="mt-10 p-6 bg-white/5 border border-white/10 rounded-lg">
+          <h2 className="text-2xl font-semibold mb-4">Generated Course</h2>
+          <pre className="whitespace-pre-wrap text-gray-300">
+            {JSON.stringify(course, null, 2)}
+          </pre>
         </div>
-
-        {/* Output UI */}
-        {result && (
-          <div className="mt-6 space-y-4">
-            {result.error && (
-              <p className="text-red-400">{result.error}</p>
-            )}
-
-            {result.youtube_videos && (
-              <div>
-                <h3 className="text-xl font-bold mb-2">🎥 YouTube Videos</h3>
-                <ul className="space-y-2">
-                  {result.youtube_videos.map((v, i) => (
-                    <li key={i} className="bg-white/5 p-3 rounded-md border border-white/10">
-                      <a href={v.url} target="_blank" rel="noreferrer" className="text-neonB">
-                        {v.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {result.articles && (
-              <div>
-                <h3 className="text-xl font-bold mb-2">📄 Articles</h3>
-                <ul className="space-y-2">
-                  {result.articles.map((v, i) => (
-                    <li key={i} className="bg-white/5 p-3 rounded-md border border-white/10">
-                      <a href={v.url} target="_blank" rel="noreferrer" className="text-neonA">
-                        {v.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-          </div>
-        )}
-
-      </div>
+      )}
     </div>
   );
 }
