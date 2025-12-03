@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
-// Backend URL
-export const API_BASE = "https://prompt-to-course-production.up.railway.app";
+// Railway Backend URL
+export const API_BASE = "https://prompt-to-course-production.up.railway.app/api";
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -11,7 +11,6 @@ const api = axios.create({
   },
 });
 
-// Add JWT token automatically
 api.interceptors.request.use((config) => {
   const token = getToken();
   if (token) {
