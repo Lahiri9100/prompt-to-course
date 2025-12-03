@@ -1,3 +1,4 @@
+// frontend/src/pages/Generate.jsx
 import React, { useState } from "react";
 import api from "../api";
 
@@ -8,8 +9,28 @@ export default function Generate() {
 
   const generateCourse = async () => {
     setLoading(true);
-    const res = await api.post("/auth/login/../generate-course/", { prompt });
-    setCourse(JSON.parse(res.data.course));
+    setCourse(null);
+
+    try {
+      const token = localStorage.getItem("access_token");
+
+      const res = await api.post(
+        "/generate-course/",
+        { prompt: prompt },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // backend returns course in JSON string → parse it
+      setCourse(JSON.parse(res.data.course));
+    } catch (error) {
+      console.error("Generation error:", error);
+      alert("Failed to generate course — check backend logs.");
+    }
+
     setLoading(false);
   };
 
@@ -18,33 +39,28 @@ export default function Generate() {
       <h1 className="text-4xl font-bold mb-6">Generate a Course</h1>
 
       <textarea
+        className="w-full p-4 bg-white/10 border border-white/20 rounded-lg text-white"
+        placeholder="Enter a topic (Ex: learn python advanced)"
+        rows={4}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
-        placeholder="What do you want to learn?"
-        className="w-full p-4 rounded bg-gray-800 border border-gray-600"
       />
 
       <button
         onClick={generateCourse}
         disabled={loading}
-        className="mt-4 px-6 py-3 rounded bg-purple-600"
+        className="mt-4 px-6 py-3 bg-purple-600 rounded-lg font-semibold hover:bg-purple-700"
       >
         {loading ? "Generating..." : "Generate Course"}
       </button>
 
       {course && (
-        <div className="mt-8">
-          <h2 className="text-3xl font-bold">{course.title}</h2>
-          {course.modules.map((m, i) => (
-            <div key={i} className="mt-4">
-              <h3 className="text-xl font-semibold">{m.name}</h3>
-              <ul className="list-disc ml-6">
-                {m.topics.map((t, j) => (
-                  <li key={j}>{t}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <div className="mt-10 p-6 bg-white/5 border border-white/10 rounded-lg">
+          <h2 className="text-2xl font-bold mb-4">Generated Course</h2>
+
+          <pre className="whitespace-pre-wrap text-gray-300">
+            {JSON.stringify(course, null, 2)}
+          </pre>
         </div>
       )}
     </div>

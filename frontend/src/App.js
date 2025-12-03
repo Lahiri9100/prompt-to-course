@@ -1,4 +1,4 @@
-// src/App.js
+// frontend/src/App.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -8,9 +8,9 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Onboarding from "./pages/Onboarding";
-import CourseGenerator from "./components/CourseGenerator";
 import Generate from "./pages/Generate";
-import Dashboard from "./pages/Dashboard";  // <-- FIX
+import CourseGenerator from "./components/CourseGenerator";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -20,13 +20,11 @@ function App() {
 
         <main className="pt-20">
           <Routes>
-            {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/generate" element={<Generate />} />
 
-            {/* After login -> onboarding */}
             <Route
               path="/onboarding"
               element={
@@ -36,9 +34,8 @@ function App() {
               }
             />
 
-            {/* Course generator page */}
             <Route
-              path="/generate"
+              path="/course-generator"
               element={
                 <ProtectedRoute>
                   <CourseGenerator />
@@ -46,12 +43,11 @@ function App() {
               }
             />
 
-            {/* REAL dashboard */}
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard />   {/* <-- FINALLY FIXED */}
+                  <Dashboard />
                 </ProtectedRoute>
               }
             />
