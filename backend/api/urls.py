@@ -5,7 +5,5 @@ from .generator_views import GenerateCourseView
 urlpatterns = [
     path("auth/register/", RegisterView.as_view(), name="register"),
     path("auth/login/", LoginView.as_view(), name="login"),
-
-    # Course generator endpoint
     path("generate-course/", GenerateCourseView.as_view(), name="generate-course"),
 ]

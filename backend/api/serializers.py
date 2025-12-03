@@ -1,13 +1,15 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
-class RegisterSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(write_only=True)
+
+# -------------------------------
+# REGISTER SERIALIZER
+# -------------------------------
+class RegisterSerializer(serializers.Serializer):
+    full_name = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ["full_name", "email", "password"]
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -15,28 +17,24 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        full_name = validated_data.pop("full_name")
-        email = validated_data.get("email")
-        password = validated_data.get("password")
-
-        # SAFE USER CREATION
-        username = email  # username required in Django default user model
+        full_name = validated_data["full_name"]
+        email = validated_data["email"]
+        password = validated_data["password"]
 
         user = User.objects.create_user(
-            username=username,
+            username=email,      # using email as username
             email=email,
-            password=password,
+            password=password
         )
-
-        # store full name inside first_name (since your model doesn't have full_name)
         user.first_name = full_name
         user.save()
 
         return user
-    
-from rest_framework import serializers
-from django.contrib.auth import authenticate
 
+
+# -------------------------------
+# LOGIN SERIALIZER
+# -------------------------------
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
