@@ -1,11 +1,10 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
-// Railway Backend URL
-export const API_BASE = "https://prompt-to-course-production.up.railway.app/api";
+export const BASE_URL = "https://prompt-to-course-production.up.railway.app/api";
 
 const api = axios.create({
-  baseURL: API_BASE,
+  baseURL: BASE_URL,   // FIXED
   headers: {
     "Content-Type": "application/json",
   },
