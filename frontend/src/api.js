@@ -5,7 +5,7 @@ export const BASE_URL = "https://prompt-to-course-production.up.railway.app";
 export const API_BASE = `${BASE_URL}/api`;
 
 const api = axios.create({
-  baseURL: BASE_URL,   // FIXED
+  baseURL: API_BASE,  // ✅ FIXED
   headers: {
     "Content-Type": "application/json",
   },
