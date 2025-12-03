@@ -17,7 +17,7 @@ export default function Login() {
 
     try {
       const payload = { email, password };
-      const res = await api.post("/api/auth/login", payload);
+      const res = await api.post("/api/auth/login/", payload);
 
       const { access } = res.data;
 

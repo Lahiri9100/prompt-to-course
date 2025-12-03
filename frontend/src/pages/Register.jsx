@@ -32,7 +32,7 @@ export default function Register() {
         course: form.course,
       };
 
-      await api.post("/api/auth/register", payload);
+      await api.post("/api/auth/register/", payload);
 
       setMessage({
         type: "success",
