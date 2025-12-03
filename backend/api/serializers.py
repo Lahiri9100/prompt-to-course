@@ -1,48 +1,40 @@
-# api/serializers.py
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import User, StudentProfile
 
-class RegisterSerializer(serializers.Serializer):
-    full_name = serializers.CharField(max_length=255)
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True, min_length=6)
 
-    def validate_email(self, value):
-        if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
-        return value
+class RegisterSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ["full_name", "email", "password"]
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            email=validated_data["email"],
-            password=validated_data["password"],
-            full_name=validated_data.get("full_name", ""),
-        )
-        # create an empty profile automatically
-        StudentProfile.objects.create(user=user)
-        return user
+        full_name = validated_data.pop("full_name")
+        email = validated_data.get("email")
+        password = validated_data.get("password")
 
-    def to_representation(self, instance):
-        return {
-            "id": instance.id,
-            "email": instance.email,
-            "full_name": instance.full_name,
-        }
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=full_name
+        )
+
+        return user
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
+    email = serializers.CharField()
+    password = serializers.CharField()
 
     def validate(self, data):
-        email = data.get("email")
-        password = data.get("password")
-        # authenticate uses USERNAME_FIELD; for custom user email is username field
-        user = authenticate(username=email, password=password)
+        user = authenticate(username=data["email"], password=data["password"])
+
         if not user:
             raise serializers.ValidationError("Invalid credentials")
-        if not user.is_active:
-            raise serializers.ValidationError("User is inactive")
+
         data["user"] = user
         return data
