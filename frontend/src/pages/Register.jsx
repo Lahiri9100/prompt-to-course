@@ -28,7 +28,7 @@ export default function Register() {
         full_name: form.full_name,
         email: form.email,
         password: form.password,
-        education: form.education_level,
+        education_level: form.education_level,
         course: form.course,
       };
 
