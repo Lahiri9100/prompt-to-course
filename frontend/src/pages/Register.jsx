@@ -32,7 +32,7 @@ export default function Register() {
         course: form.course,
       };
       console.log("REGISTER REQUEST TO:", api.defaults.baseURL + "/auth/register/");
-      await api.post("/api/auth/register/", payload);
+      await api.post("/auth/register/", payload);
 
       setMessage({
         type: "success",
