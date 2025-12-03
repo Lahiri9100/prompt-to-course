@@ -17,17 +17,20 @@ export default function Login() {
 
     try {
       const payload = { email, password };
-      const res = await api.post("/auth/login/", payload);
+
+      // ✅ FIXED ENDPOINT
+      const res = await api.post("/login/", payload);
 
       const { access } = res.data;
 
-      // Save JWT access token
+      // Save JWT token
       saveToken(access);
 
       setMessage({ type: "success", text: "Login successful!" });
 
       setTimeout(() => navigate("/dashboard"), 800);
     } catch (err) {
+      console.error("LOGIN ERROR:", err.response?.data || err);
       setMessage({
         type: "error",
         text: "Invalid credentials",
