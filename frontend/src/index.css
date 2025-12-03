@@ -1,13 +1,49 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* custom */
+:root{
+  --glass: rgba(255,255,255,0.06);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* simple body reset */
+html,body,#root {
+  height:100%;
+}
+
+body{
+  @apply bg-black text-white antialiased;
+  background: radial-gradient(1200px 400px at -10% 10%, rgba(123,63,242,0.07), transparent 10%),
+              radial-gradient(900px 300px at 120% 90%, rgba(255,45,117,0.04), transparent 8%),
+              #08060a;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+               Roboto, "Helvetica Neue", Arial;
+}
+
+/* utility card for glass */
+.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* neon heading underline */
+.neon-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.neon-underline::after{
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 6px;
+  background: linear-gradient(90deg,#7B3FF2,#00E0FF,#FF2D75);
+  filter: blur(8px);
+  opacity: 0.85;
+  border-radius: 6px;
+  z-index:-1;
 }

@@ -1,30 +1,62 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+// src/App.js
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Onboarding from "./pages/Onboarding";
+import CourseGenerator from "./components/CourseGenerator";
 
 function App() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/generate/");
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, []);
-
   return (
-    <div style={{ textAlign: "center", marginTop: "50px", color: "white" }}>
-      <h1>Prompt-to-Course 🚀</h1>
-      {data ? (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      ) : (
-        <p>Loading data from Django backend...</p>
-      )}
-    </div>
+    <Router>
+      <div className="min-h-screen bg-black text-white">
+        {/* Always at the top */}
+        <Navbar />
+
+        <main className="pt-20">
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* After login -> onboarding */}
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute>
+                  <Onboarding />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Course generator page */}
+            <Route
+              path="/generate"
+              element={
+                <ProtectedRoute>
+                  <CourseGenerator />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Example protected dashboard */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <div className="p-10 text-3xl">Private Dashboard</div>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
