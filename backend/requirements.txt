@@ -1,5 +1,5 @@
-Django==5.2.8
-djangorestframework==3.16.1
-gunicorn
-requests
-djangorestframework-simplejwt
+Django>=4.2
+djangorestframework>=3.14
+django-cors-headers>=4.3
+gunicorn>=23.0
+whitenoise>=6.6
