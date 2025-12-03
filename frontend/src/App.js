@@ -10,13 +10,12 @@ import Register from "./pages/Register";
 import Onboarding from "./pages/Onboarding";
 import CourseGenerator from "./components/CourseGenerator";
 import Generate from "./pages/Generate";
-
+import Dashboard from "./pages/Dashboard";  // <-- FIX
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-black text-white">
-        {/* Always at the top */}
         <Navbar />
 
         <main className="pt-20">
@@ -26,7 +25,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/generate" element={<Generate />} />
-
 
             {/* After login -> onboarding */}
             <Route
@@ -48,12 +46,12 @@ function App() {
               }
             />
 
-            {/* Example protected dashboard */}
+            {/* REAL dashboard */}
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <div className="p-10 text-3xl">Private Dashboard</div>
+                  <Dashboard />   {/* <-- FINALLY FIXED */}
                 </ProtectedRoute>
               }
             />
