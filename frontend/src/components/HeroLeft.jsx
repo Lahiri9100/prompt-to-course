@@ -1,9 +1,11 @@
 // src/components/HeroLeft.jsx
 import React from "react";
+import heroImg from "../assets/hero.png"; // <-- ADDED
 
-export default function HeroLeft({ imageUrl }) {
+export default function HeroLeft() {
   return (
     <div className="hidden md:flex md:w-1/2 h-full items-center justify-center relative overflow-hidden">
+
       {/* Background gradient / optional image */}
       <div
         className="absolute inset-0 -z-10 bg-gradient-to-br from-[#071423] via-[#081a25] to-[#0b0b12] opacity-95"
@@ -14,20 +16,18 @@ export default function HeroLeft({ imageUrl }) {
       <div className="absolute -left-20 -top-20 w-96 h-96 rounded-full bg-gradient-to-tr from-[#7B3FF2]/40 via-[#00E0FF]/30 to-[#FF2D75]/20 filter blur-3xl opacity-70 animate-blob" />
       <div className="absolute right-10 bottom-10 w-80 h-80 rounded-full bg-gradient-to-tr from-[#00E0FF]/25 via-[#7B3FF2]/10 to-[#FF2D75]/15 filter blur-2xl opacity-60 animate-blob animation-delay-2000" />
 
-      {/* If you want to use an image: */}
-      {imageUrl && (
-        <img
-          src={imageUrl}
-          alt="hero"
-          className="absolute inset-0 w-full h-full object-cover opacity-10 mix-blend-overlay pointer-events-none"
-        />
-      )}
+      {/* MAIN HERO IMAGE — FIXED / FULL VISIBILITY */}
+      <img
+        src={heroImg}
+        alt="hero"
+        className="absolute inset-0 w-full h-full object-contain z-10 pointer-events-none"
+      />
 
       {/* Animated SVG curved lines */}
       <svg
         viewBox="0 0 900 600"
         preserveAspectRatio="xMidYMid slice"
-        className="max-w-full max-h-full w-[90%] h-[80%]"
+        className="max-w-full max-h-full w-[90%] h-[80%] opacity-40"
         aria-hidden="true"
       >
         <defs>
@@ -45,7 +45,6 @@ export default function HeroLeft({ imageUrl }) {
           </filter>
         </defs>
 
-        {/* multiple animated paths at different speeds and offsets */}
         <g stroke="url(#g1)" strokeWidth="3" fill="none" filter="url(#glow)">
           <path
             className="curve path-1"
@@ -68,7 +67,7 @@ export default function HeroLeft({ imageUrl }) {
       </svg>
 
       {/* small caption */}
-      <div className="absolute bottom-8 left-8 text-left text-sm text-slate-300/80">
+      <div className="absolute bottom-8 left-8 text-left text-sm text-slate-300/80 z-20">
         <div className="font-semibold text-white">Syllabrix</div>
         <div className="mt-1 max-w-xs">
           AI-curated learning paths. Personalized roadmaps and curated resources.
